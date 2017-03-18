@@ -14,8 +14,7 @@ measurements = []
 ## for windows, path splitter is \
 #PATH_SEPARATOR = '\\'
 PATH_SEPARATOR = '/'
-#STEERING_CORRECTION = 0.5
-STEERING_CORRECTION = 0.8
+STEERING_CORRECTION = 0.1
 for line in lines:
     steering_center = float(line[3])
     steering_left = steering_center + STEERING_CORRECTION
@@ -53,7 +52,7 @@ from keras.layers.convolutional import Convolution2D
 model = Sequential()
 model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160, 320, 3)))
 ### cropping
-model.add(Cropping2D(cropping=((72, 25), (0,0))))
+model.add(Cropping2D(cropping=((60, 25), (0,0))))
 
 model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation="relu"))
 model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation="relu"))
