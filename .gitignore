@@ -1,0 +1,9 @@
+*.jpg
+*.h5
+*.whl
+.idea/*.*
+.ipynb_checkpoints/*.*
+data/*
+
+
+

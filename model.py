@@ -14,7 +14,7 @@ measurements = []
 ## for windows, path splitter is \
 #PATH_SEPARATOR = '\\'
 PATH_SEPARATOR = '/'
-STEERING_CORRECTION = 0.1
+STEERING_CORRECTION = 0.2
 for line in lines:
     steering_center = float(line[3])
     steering_left = steering_center + STEERING_CORRECTION
@@ -66,7 +66,7 @@ model.add(Dense(50))
 model.add(Dense(10))
 model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
-model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=5)
+model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=3)
 
-model.save('model.h5')
+model.save('model_02.h5')
 print("model saved!")
