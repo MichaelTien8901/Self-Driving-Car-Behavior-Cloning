@@ -85,7 +85,12 @@ model.compile(loss='mse', optimizer='adam')
    ```python
    model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=3)
    ```
-   
+| Training Loss | Validation Loss  |
+| -------------:| ----------------:|
+| 0.0117        |  0.0190          |
+
+![Training Result](https://github.com/MichaelTien8901/Self-Driving-Car-Behavior-Cloning/blob/master/training_loss.png "Training Loss")
+
 ## Test Result on Track 1 ##
 
 Auto driving in track 1 is pretty stable.  There is not obvious "drunk driving" effect for this model. 
