@@ -82,7 +82,7 @@ model.compile(loss='mse', optimizer='adam')
    
    So epoch number = 3 is chosen for most of the test.
       
-    ```python
+   ```python
    model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=3)
    ```
    
