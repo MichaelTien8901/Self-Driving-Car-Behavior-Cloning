@@ -71,6 +71,22 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 ```
 
+|Layers       |  Dimension |
+|-------------|------------|
+|Input Layer  | 3@160x320  |
+|Normalization| 3@160x320  |
+|Cropping     |  3@75x320  |
+|5x5 Convolutional  | 24@38x160 |
+|5x5 Convolutional  | 36@19x80 |
+|5x5 Convolutional  | 48@10x40 |
+|3x3 Convolutional  | 64@8x38  |
+|3x3 Convolutional  | 64@6x36  |
+|Flatten            | 13824  |
+|Full Connected     | 100   |
+|Full Connected     | 50   |
+|Full Connected     | 10   |
+|Full Connected     | 1   |
+
 ## Training and Validation ###
 * Epoch number and Overfitting
 
