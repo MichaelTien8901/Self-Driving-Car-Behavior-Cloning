@@ -75,22 +75,34 @@ model.compile(loss='mse', optimizer='adam')
 * Epoch number and Overfitting
 
    From the training and validation errors, I found out more epoch might cause higher validation errors, even the training error 
-   is getting smaller.  It might be the sign of overfitting because the validation error isn't going down.  So epoch number = 3 
-   is chosen for most of the test.
+   is getting smaller.  It might be the sign of overfitting because the validation error isn't going down.  
    
-   ```python
+ 
+![Overfitting](https://github.com/MichaelTien8901/Self-Driving-Car-Behavior-Cloning/blob/master/overfitting.png "Overfitting if Epoch > 2")
+   
+   So epoch number = 3 is chosen for most of the test.
+      
+    ```python
    model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=3)
    ```
-
+   
 ## Test Result on Track 1 ##
+
 Auto driving in track 1 is pretty stable.  There is not obvious "drunk driving" effect for this model. 
 Set speed 9, 15, and 25 are almost the same result.  
 
 ## Various Test
+
 * Different Color Space
 
-I've tried to convert RGB color space to HSV hoping to deal with the brightness difference problem.  For the current
-track and data collected, no obvious advantage found.
+I've tried to convert RGB color space to HSV hoping to deal with the brightness difference problem.  
+
+```python
+def preprocessing_image(image):
+    return cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+```
+
+For the current track and data collected, no obvious advantage found.
 
 * Greyscale with Histogram Equalization
 
