@@ -179,11 +179,6 @@ def preprocessing_image(image):
 
 The result model can't find color different between road and grass and can't finish the running track.
 
-* Unstable Result for Same Train Set
-
-The same training data set might generate different result for different run of the model.y.  This might be result of too little 
-training data.  The split of validation and training data might cause some features not trained well.  
-
 * Adaptive Correction Angle for Left and Right Image
 
    In stead of using fix correction angle for left and right images, an adaptive angle formula is used like
