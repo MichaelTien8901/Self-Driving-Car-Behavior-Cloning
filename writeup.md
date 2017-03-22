@@ -6,7 +6,37 @@ The goals / steps of this project are the following:
 * Train and validate the model with a training and validation set
 * Test that the model successfully drives around track one without leaving the road
 * Summarize the results with a written report
+## Problems During Training ## 
+* Left Turn Bias
 
+  At the begining, the left turn bias is very obviously troublesome.  Use data augmentation with flipping side of images 
+  solve this problem immdiately.
+  
+* Very Large Training and Validation Loss
+
+  After analyzing images, I cropping out the left and right side by 24 pixels, top by 60 pixels, and bottom by 24 pixels.  
+  The loss shrink a lot and the auto drive in simulator seems to work.
+  
+* Can't Keep in the Middle of Lane
+  
+  Use multiple camera images with 'correction angle', the car seems to know how to keep in the middle of lane.
+  
+* Sharp Turn Failure
+
+  The car failed in some sharp turns.  After add more training data of these turns, the car still can't stably keep in the middle 
+  of the turns. The other way is tuning the 'correction angle' used for multiple camera images.  After increase the correction angle
+  a bit, the car finally turn successfully.
+
+* Can't Differentiate Lane and Grass
+
+  At some turns where no lane mark at one side, the car can't keep inside the lane.  Don't know it is because the sharp turn or 
+  the lane recognition. I add more training data in these places.  Combined with correction angle value, this problem seems disappear.
+
+* Overfitting 
+   
+   From the training and validation loss chart, it seems overfitting when validation loss didn't decrease with training loss.  I 
+   put the dropout layers into the model to prevent overfitting. 
+   
 ## Data Preprocessing ##
 * Data Augmentation
 
@@ -30,7 +60,7 @@ The goals / steps of this project are the following:
 
    This is built in the CNN using keras
    ```python
-   model.add(Cropping2D(cropping=((60, 25), (0,0))))
+   model.add(Cropping2D(cropping=((60, 25), (24,24))))
    ```
 * Value Normalization
 
@@ -47,43 +77,55 @@ I borrowed the CNN from NVIDIA paper
 [The deep learning self-driving car paper from NVIDIA](https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/)
 to implment the behavior cloning project.  
 
-```python)
-
-from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda, Activation, Dropout, Cropping2D
-from keras.layers.convolutional import Convolution2D
+```python
+DROPOUT_RATE = 0.5
 model = Sequential()
 model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160, 320, 3)))
 ### cropping
-model.add(Cropping2D(cropping=((60, 25), (0,0))))
+model.add(Cropping2D(cropping=((70, 25), (24,24))))
 
 model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation="relu"))
+model.add(Dropout(DROPOUT_RATE))
 model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation="relu"))
+model.add(Dropout(DROPOUT_RATE))
 model.add(Convolution2D(48, 5, 5, subsample=(2,2), activation="relu"))
+model.add(Dropout(DROPOUT_RATE))
 model.add(Convolution2D(64, 3, 3, activation="relu"))
+model.add(Dropout(DROPOUT_RATE))
 model.add(Convolution2D(64, 3, 3, activation="relu"))
+model.add(Dropout(DROPOUT_RATE))
 
 model.add(Flatten())
 model.add(Dense(100))
+model.add(Dropout(DROPOUT_RATE))
 model.add(Dense(50))
+model.add(Dropout(DROPOUT_RATE))
 model.add(Dense(10))
 model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
+
 ```
 
 |Layers       |  Dimension |
 |-------------|------------|
 |Input Layer  | 3@160x320  |
 |Normalization| 3@160x320  |
-|Cropping     |  3@75x320  |
-|5x5 Convolutional  | 24@38x160 |
-|5x5 Convolutional  | 36@19x80 |
-|5x5 Convolutional  | 48@10x40 |
-|3x3 Convolutional  | 64@8x38  |
-|3x3 Convolutional  | 64@6x36  |
-|Flatten            | 13824  |
-|Full Connected     | 100   |
-|Full Connected     | 50   |
+|Cropping     |  3@75x272  |
+|5x5 Convolutional  | 24@38x136 |
+|0.5 Dropout        |           |
+|5x5 Convolutional  | 36@19x68  |
+|0.5 Dropout        |          |
+|5x5 Convolutional  | 48@10x34  |
+|0.5 Dropout        |          |
+|3x3 Convolutional  | 64@8x32   |
+|0.5 Dropout        |          |
+|3x3 Convolutional  | 64@6x30   |
+|0.5 Dropout        |          |
+|Flatten            | 11520     |
+|Full Connected     | 100       |
+|0.5 Dropout        |          |
+|Full Connected     | 50        |
+|0.5 Dropout        |          |
 |Full Connected     | 10   |
 |Full Connected     | 1   |
 
@@ -103,7 +145,7 @@ model.compile(loss='mse', optimizer='adam')
    ```
 | Training Loss | Validation Loss  |
 | -------------:| ----------------:|
-| 0.0117        |  0.0190          |
+| 0.0306        |  0.0405          |
 
 ![Training Result](https://github.com/MichaelTien8901/Self-Driving-Car-Behavior-Cloning/blob/master/training_loss.png "Training Loss")
 
